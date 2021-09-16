@@ -2,6 +2,14 @@
 <suite name="Api test suite " parallel="methods" thread-count="5">
 	
 	<test name="Api Regressions Tests" >
+	
+	<listeners>
+		<listener class-name="org.arun.basic.Septworkexamples.core.TestMethodListener" />
+	</listeners>
+	
+	
+			
+	
 		
 	<classes>
 			<class name="org.arun.basic.Septworkexamples.api.testscripts.ByLeadSecretTests" />
