@@ -30,29 +30,35 @@ public class ByLeadSecretTests {
 	private String baseUri = "https://credapi.credify.tech/api/brfunnelorch/v2/";
 	private String basePath = "resume/byLeadSecret";
 
-	@DataProvider(name = "positiveInput")
 	public Object[] supplyPositiveInputs() {
-		Object[] objArray = new Object[2];
-		BodyLoanAppSecret b1 = new BodyLoanAppSecret();
-		b1.setLoanAppUuid(UUID.fromString(VALID_APP_UUID));
-		b1.setSkipSideEffects(true);
-		objArray[0] = b1;
 
-		BodyLoanAppSecret b2 = new BodyLoanAppSecret();
-		b2.setLoanAppUuid(UUID.fromString(VALID_APP_UUID));
-		b2.setSkipSideEffects(false);
-		objArray[1] = b2;
+		// Sending input Objects with side effects on and Off and Valid App UUID
+		Object[] objArray = new Object[2];
+
+		objArray[0] = createBodyLoanAppSecret("VALID", true);
+		objArray[1] = createBodyLoanAppSecret("VALID", false);
 		return objArray;
 
 	}
 
+	public Object createBodyLoanAppSecret(String uuidType, boolean setSkipSideEffects) {
+
+		UUID inputUUID = uuidType.equals("VALID") ? UUID.fromString(VALID_APP_UUID) : randomUUId();
+		BodyLoanAppSecret b1 = new BodyLoanAppSecret();
+		b1.setLoanAppUuid(inputUUID);
+		b1.setSkipSideEffects(setSkipSideEffects);
+		return b1;
+	}
+
 	@DataProvider(name = "negativeInput")
 	public Object[] supplyInvalidInputs() {
-		Object[] objArray = new Object[1];
-		BodyLoanAppSecret b1 = new BodyLoanAppSecret();
-		b1.setLoanAppUuid(randomUUId());
-		b1.setSkipSideEffects(true);
-		objArray[0] = b1;
+
+		// Sending negative input Objects with side effects on and Off and invalid App
+		// UUID
+
+		Object[] objArray = new Object[2];
+		objArray[0] = createBodyLoanAppSecret("INVALID", true);
+		objArray[0] = createBodyLoanAppSecret("INVALID", false);
 		return objArray;
 
 	}
@@ -85,6 +91,7 @@ public class ByLeadSecretTests {
 
 	}
 
+	// Sending without Corr id header
 	@Test(dataProvider = "positiveInput")
 	public void ResponseCode_NoCorrIdHeader_500ErrorExpected(BodyLoanAppSecret b1) {
 
@@ -93,6 +100,8 @@ public class ByLeadSecretTests {
 		responseCodeValidation(response, HttpStatus.SC_INTERNAL_SERVER_ERROR);
 
 	}
+
+	// Sending without source id header
 
 	@Test(dataProvider = "positiveInput")
 	public void ResponseCode_NoSourceIdHeader_500ErrorExpected(BodyLoanAppSecret b1) {
@@ -111,6 +120,7 @@ public class ByLeadSecretTests {
 
 	}
 
+	// check if output is received in a reasonable time
 	@Test(dataProvider = "positiveInput", dependsOnMethods = "ResponseCode_ValidInput_Http200Ok")
 	public void ResponseCode_ReponseTime_LessThanNSeconds(BodyLoanAppSecret b1) {
 		Response response = execute(rspec, b1);
@@ -119,6 +129,7 @@ public class ByLeadSecretTests {
 
 	}
 
+	// all valid values test
 	@Test(dataProvider = "positiveInput", dependsOnMethods = "ResponseCode_ValidInput_Http200Ok")
 	public void ResponseValue_ProductType_Personal_Loan(BodyLoanAppSecret b1) {
 
