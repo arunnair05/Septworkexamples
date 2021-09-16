@@ -1,8 +1,5 @@
 package org.arun.basic.Septworkexamples.core;
 
-import java.util.Map;
-
-import org.openqa.selenium.WebDriver;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
@@ -46,27 +43,31 @@ public class WebDriverListener implements ITestListener {
 	@Override
 	public synchronized void onStart(ITestContext context) {
 
-		Map<String, String> map = context.getCurrentXmlTest().getAllParameters();
-		// get browser name specified in the TestNG XML test suite file
-		String browserName = map.get("browserName");
+		/*
+		 * Map<String, String> map = context.getCurrentXmlTest().getAllParameters(); //
+		 * get browser name specified in the // TestNG XML test suite file String String
+		 * browserName = map.get("browserName");
+		 * 
+		 * browserName = browserName == null ? "chrome" : browserName;
+		 * 
+		 * WebDriver driver = DriverFactory.getDriver(browserName);
+		 * DriverManager.setWebDriver(driver);
+		 * DriverManager.setBrowserInfo(browserName); Log.info("Done! Created " +
+		 * browserName + " driver!" + DriverManager.getDriver().toString());
+		 */
 
-		browserName = browserName == null ? "chrome" : browserName;
-
-		WebDriver driver = DriverFactory.getDriver(browserName);
-		DriverManager.setWebDriver(driver);
-		DriverManager.setBrowserInfo(browserName);
-		Log.info("Done! Created " + browserName + " driver!" + DriverManager.getDriver().toString());
 	}
 
 	@Override
 	public void onFinish(ITestContext context) {
 		// close the browser
-		Log.info("Closing " + DriverManager.getBrowserInfo());
+		/*
+		 * Log.info("Closing " + DriverManager.getBrowserInfo());
+		 * 
+		 * WebDriver driver = DriverManager.getDriver(); if (driver != null) {
+		 * driver.quit(); }
+		 */
 
-		WebDriver driver = DriverManager.getDriver();
-		if (driver != null) {
-			driver.quit();
-		}
 	}
 
 }

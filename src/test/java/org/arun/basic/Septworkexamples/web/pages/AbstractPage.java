@@ -1,8 +1,10 @@
 package org.arun.basic.Septworkexamples.web.pages;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.LoadableComponent;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -15,5 +17,11 @@ abstract class AbstractPage<T extends LoadableComponent<T>> extends LoadableComp
 		this.driver = driver;
 		PageFactory.initElements(new AjaxElementLocatorFactory(driver, TimeoutValue), this);
 		wait = new WebDriverWait(driver, 10);
+	}
+
+	public void waitForSpinnerToGo() {
+
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("fWaitc")));
+
 	}
 }

@@ -59,6 +59,7 @@ public class ByLeadSecretTests {
 
 	@BeforeClass
 	public void setup() {
+		// Setting up the builder
 		build = new RequestSpecBuilder();
 		build.setBaseUri(baseUri);
 		build.setBasePath(basePath);
@@ -122,7 +123,7 @@ public class ByLeadSecretTests {
 	public void ResponseValue_ProductType_Personal_Loan(BodyLoanAppSecret b1) {
 
 		Response response = execute(rspec, b1);
-		System.out.println(response.asString());
+		// Log.info("Response :::::::::" + response.asString());
 		LoanAppSecretResponse apiresponse = response.getBody().as(LoanAppSecretResponse.class);
 		LoanAppResumptionInfo lifo = apiresponse.getLoanAppResumptionInfo();
 		BorrowerResumptionInfo brInfo = lifo.getBorrowerResumptionInfo();
@@ -141,7 +142,6 @@ public class ByLeadSecretTests {
 		lifo.getCashOutAmount();
 		boolean isCanAddLiteral = lifo.isCanAddCollateral();
 		Object rewardProgramCode = lifo.getRewardProgramCode();
-		System.out.println(" --> " + lifo.getAddon());
 		Object isMobileDiscountApplied = lifo.getIsMobileDiscountApplied();
 		lifo.isCheckingDiscountAvailable();
 
@@ -164,6 +164,7 @@ public class ByLeadSecretTests {
 	}
 
 	public Response execute(RequestSpecification rspec, BodyLoanAppSecret b1) {
+		// Logging if validation fails
 		return given().spec(rspec).when().log().ifValidationFails().body(b1).post();
 	}
 

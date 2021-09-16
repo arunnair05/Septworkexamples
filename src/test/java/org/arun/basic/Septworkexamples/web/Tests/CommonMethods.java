@@ -12,7 +12,7 @@ public class CommonMethods {
 	}
 
 	public static String getRandomString(int length, boolean useLetters, boolean useNumbers) {
-		return RandomStringUtils.random(length, useLetters, useNumbers);
+		return RandomStringUtils.random(6, useLetters, useNumbers) + "G" + valueBetweenRange(1, 10);
 	}
 
 }

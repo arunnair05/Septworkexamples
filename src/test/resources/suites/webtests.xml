@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Local Web Tests Runner" verbose="1"
+<suite name="Web Test Suite" verbose="1"
 	configfailurepolicy="continue" >
 
 
 	<listeners>
-		<!-- This TestNG listener takes care of setting up and tearing down the 
-			Local Selenium driver, and it also changes test names in the final TestNG 
-			HTML report. -->
+		
 		<listener class-name="org.arun.basic.Septworkexamples.core.WebDriverListener" />
 
 	</listeners>

@@ -2,7 +2,6 @@ package org.arun.basic.Septworkexamples.web.pages;
 
 import static org.testng.Assert.assertTrue;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -29,13 +28,13 @@ public class CreateYourAccountPage extends AbstractPage<CreateYourAccountPage> {
 	@Override
 	protected void load() {
 		wait.until(ExpectedConditions.urlContains("step=login"));
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("fWaitc")));
+		waitForSpinnerToGo();
 
 	}
 
 	@Override
 	protected void isLoaded() throws Error {
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("fWaitc")));
+		waitForSpinnerToGo();
 		assertTrue(driver.getCurrentUrl().contains("step=login"));
 		assertTrue(txtUserName.isDisplayed());
 		assertTrue(txtPassword.isDisplayed());
