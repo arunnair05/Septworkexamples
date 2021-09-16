@@ -24,6 +24,7 @@ public class NonDmFunnel extends TestBase {
 
 	@Test
 	public void NonDmFunnelPage_mainElements_Visible_PageLoad() {
+		// Testing if all elements are visible
 		NonDmHomePage ndm = new NonDmHomePage(driver).get();
 		assertTrue(ndm.txtLoanAmount.isDisplayed());
 		assertTrue(ndm.selectLoanPurpose.isDisplayed());
@@ -35,6 +36,8 @@ public class NonDmFunnel extends TestBase {
 
 	@Test
 	public void NonDmFunnelPage_verify_LoanPurpose_DropDown_Contains_Allvalues() {
+		// Testing if dropdown contains all expected options
+
 		NonDmHomePage ndm = new NonDmHomePage(driver).get();
 		ArrayList<String> expectedValue = new ArrayList<String>();
 		expectedValue.add("Pay off Credit Cards");
@@ -51,6 +54,8 @@ public class NonDmFunnel extends TestBase {
 
 	@Test(dependsOnMethods = "NonDmFunnelPage_verify_LoanPurpose_DropDown_Contains_Allvalues")
 	public void NonDmFunnelPage_allValidValues_Account_Success() {
+
+		// Testing Account creation and login with all success Values
 
 		HashMap<String, String> hm1 = new HashMap<String, String>();
 		hm1.put("BorrowerIncome", "130000");
