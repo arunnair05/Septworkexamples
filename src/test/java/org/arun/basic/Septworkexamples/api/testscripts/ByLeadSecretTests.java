@@ -30,6 +30,7 @@ public class ByLeadSecretTests {
 	private String baseUri = "https://credapi.credify.tech/api/brfunnelorch/v2/";
 	private String basePath = "resume/byLeadSecret";
 
+	@DataProvider(name = "positiveInput")
 	public Object[] supplyPositiveInputs() {
 
 		// Sending input Objects with side effects on and Off and Valid App UUID
@@ -58,7 +59,7 @@ public class ByLeadSecretTests {
 
 		Object[] objArray = new Object[2];
 		objArray[0] = createBodyLoanAppSecret("INVALID", true);
-		objArray[0] = createBodyLoanAppSecret("INVALID", false);
+		objArray[1] = createBodyLoanAppSecret("INVALID", false);
 		return objArray;
 
 	}

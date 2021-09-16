@@ -7,6 +7,8 @@
 	<listeners>
 		
 		<listener class-name="org.arun.basic.Septworkexamples.core.WebDriverListener" />
+		<listener class-name="org.arun.basic.Septworkexamples.core.TestMethodListener" />
+		
 
 	</listeners>
 
