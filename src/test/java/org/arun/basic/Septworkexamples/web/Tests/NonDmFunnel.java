@@ -97,6 +97,8 @@ public class NonDmFunnel extends TestBase {
 		enterUserNamePasswordForAccountCreation(cPage, userName, password);
 
 		// Getting the data from Offer Page
+		// This is the data we are shown as Offered loan. Storing this for comparison
+		// later
 		OfferPage of1 = new OfferPage(driver).get();
 		Log.info("Size of Row is " + (of1.rows.size()));
 		List<String> expectedValues = of1.getDataTable().getRowValues();
@@ -111,7 +113,8 @@ public class NonDmFunnel extends TestBase {
 		LoginPage l1 = new LoginPage(driver).get();
 		LoginAsRegisteredUser(l1, userName, password);
 
-		// Checking the Offer rates
+		// Checking the Offer rates when login
+		// This should be compared with offered rate
 		IndividualOfferPage if1 = new IndividualOfferPage(driver).get();
 		List<String> actualValues = if1.getDataTable().getRowValues();
 		Log.info(expectedValues);
