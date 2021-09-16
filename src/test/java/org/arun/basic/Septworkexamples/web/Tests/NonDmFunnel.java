@@ -4,6 +4,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,6 +52,15 @@ public class NonDmFunnel extends TestBase {
 	@Test(dependsOnMethods = "NonDmFunnelPage_verify_LoanPurpose_DropDown_Contains_Allvalues")
 	public void NonDmFunnelPage_allValidValues_Account_Success() {
 
+		HashMap<String, String> hm1 = new HashMap<String, String>();
+		hm1.put("BorrowerIncome", "130000");
+		hm1.put("AdditionalBorrowerIncome", "50000");
+		hm1.put("City", "Fremont");
+		hm1.put("State", "CA");
+		hm1.put("ZipCode", "94538");
+		hm1.put("Street", "Fremont");
+		hm1.put("Dob", "01/01/1982");
+
 		// Going to enter loan amount and loan purpose and click on Submit button
 		// input values are stored
 		NonDmHomePage ndm = new NonDmHomePage(driver).get();
@@ -62,7 +72,7 @@ public class NonDmFunnel extends TestBase {
 
 		// Enter basic User details
 		BasicInformationPage basicInfo = new BasicInformationPage(driver).get();
-		enterValuesAndClickSubmitOnBasicInformationPage(basicInfo);
+		enterValuesAndClickSubmitOnBasicInformationPage(basicInfo, hm1);
 
 		// on successful submission of values from NonDmFunnel page
 		// Going to enter Individual income and Additional Income and click on Submit
@@ -70,8 +80,8 @@ public class NonDmFunnel extends TestBase {
 		// input values are stored
 
 		IndividualIncomePage incomePage = new IndividualIncomePage(driver).get();
-		incomePage.txtBorrowerAdditionalIncome.sendKeys("50000");
-		incomePage.txtBorrowerIncome.sendKeys("130000");
+		incomePage.txtBorrowerAdditionalIncome.sendKeys(hm1.get("AdditionalBorrowerIncome"));
+		incomePage.txtBorrowerIncome.sendKeys(hm1.get("BorrowerIncome"));
 		incomePage.btnContinue.click();
 		incomePage.btnContinue.click();
 
@@ -114,21 +124,22 @@ public class NonDmFunnel extends TestBase {
 
 	}
 
-	public void enterValuesAndClickSubmitOnBasicInformationPage(BasicInformationPage basicinfo) {
+	public void enterValuesAndClickSubmitOnBasicInformationPage(BasicInformationPage basicinfo,
+			HashMap<String, String> hm1) {
 
 		basicinfo.txtBorrowerFirstName.sendKeys(CommonMethods.getRandomString(10, true, false));
 		basicinfo.txtBorrowerLastName.sendKeys(CommonMethods.getRandomString(10, true, false));
-		basicinfo.txtBorrowerCity.sendKeys("Fremont");
-		basicinfo.txtBorrowerState.sendKeys("CA");
-		basicinfo.txtBorrowerDateOfBirth.sendKeys("01/01/1982");
-		basicinfo.txtBorrowerStreet.sendKeys("Fremont");
+		basicinfo.txtBorrowerCity.sendKeys(hm1.get("City"));
+		basicinfo.txtBorrowerState.sendKeys(hm1.get("State"));
+		basicinfo.txtBorrowerDateOfBirth.sendKeys(hm1.get("Dob"));
+		basicinfo.txtBorrowerStreet.sendKeys(hm1.get("Street"));
 
 		// Accepting the Address shown in suggestions
 		List<WebElement> size = basicinfo.waitForGeoSuggestions();
 		Log.info("Size is " + size.size());
 		size.get(0).click();
 		basicinfo.txtBorrowerZipCode.clear();
-		basicinfo.txtBorrowerZipCode.sendKeys("94538");
+		basicinfo.txtBorrowerZipCode.sendKeys(hm1.get("ZipCode"));
 
 		basicinfo.btnContinue.click();
 
