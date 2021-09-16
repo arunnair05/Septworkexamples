@@ -24,46 +24,55 @@ import io.restassured.specification.RequestSpecification;
 public class ByLeadSecretTests {
 	RequestSpecification rspec;
 	RequestSpecBuilder build;
-	private static String SOURCE_ID = "coding-challenge";
-	private static int Expected_ResponseTime = 5;
+	private String SOURCE_ID = "coding-challenge";
+	private int Expected_ResponseTime = 5;
+	private String VALID_APP_UUID = "b8096ec7-2150-405f-84f5-ae99864b3e96";
+	private String baseUri = "https://credapi.credify.tech/api/brfunnelorch/v2/";
+	private String basePath = "resume/byLeadSecret";
 
-	@DataProvider(name = "positiveInput")
 	public Object[] supplyPositiveInputs() {
-		Object[] objArray = new Object[2];
-		BodyLoanAppSecret b1 = new BodyLoanAppSecret();
-		b1.setLoanAppUuid(UUID.fromString("b8096ec7-2150-405f-84f5-ae99864b3e96"));
-		b1.setSkipSideEffects(true);
-		objArray[0] = b1;
 
-		BodyLoanAppSecret b2 = new BodyLoanAppSecret();
-		b2.setLoanAppUuid(UUID.fromString("b8096ec7-2150-405f-84f5-ae99864b3e96"));
-		b2.setSkipSideEffects(false);
-		objArray[1] = b2;
+		// Sending input Objects with side effects on and Off and Valid App UUID
+		Object[] objArray = new Object[2];
+
+		objArray[0] = createBodyLoanAppSecret("VALID", true);
+		objArray[1] = createBodyLoanAppSecret("VALID", false);
 		return objArray;
 
 	}
 
+	public Object createBodyLoanAppSecret(String uuidType, boolean setSkipSideEffects) {
+
+		UUID inputUUID = uuidType.equals("VALID") ? UUID.fromString(VALID_APP_UUID) : randomUUId();
+		BodyLoanAppSecret b1 = new BodyLoanAppSecret();
+		b1.setLoanAppUuid(inputUUID);
+		b1.setSkipSideEffects(setSkipSideEffects);
+		return b1;
+	}
+
 	@DataProvider(name = "negativeInput")
 	public Object[] supplyInvalidInputs() {
-		Object[] objArray = new Object[1];
-		BodyLoanAppSecret b1 = new BodyLoanAppSecret();
-		b1.setLoanAppUuid(randomUUId());
-		b1.setSkipSideEffects(true);
-		objArray[0] = b1;
+
+		// Sending negative input Objects with side effects on and Off and invalid App
+		// UUID
+
+		Object[] objArray = new Object[2];
+		objArray[0] = createBodyLoanAppSecret("INVALID", true);
+		objArray[0] = createBodyLoanAppSecret("INVALID", false);
 		return objArray;
 
 	}
 
 	@BeforeClass
 	public void setup() {
+		// Setting up the builder
 		build = new RequestSpecBuilder();
-		build.setBaseUri("https://credapi.credify.tech/api/brfunnelorch/v2/");
-		build.setBasePath("resume/byLeadSecret");
+		build.setBaseUri(baseUri);
+		build.setBasePath(basePath);
 		build.addHeader("x-cf-source-id", SOURCE_ID);
 		build.addHeader("x-cf-corr-id", randomUUId().toString());
 		build.setContentType(ContentType.JSON);
 		rspec = build.build();
-		System.out.println("This method is executed before Class1");
 
 	}
 
@@ -78,21 +87,41 @@ public class ByLeadSecretTests {
 	public void ResponseCode_InvalidInput_404(BodyLoanAppSecret b1) {
 
 		Response response = execute(rspec, b1);
-		int statusCode = response.getStatusCode();
-		assertTrue(statusCode == HttpStatus.SC_NOT_FOUND, "Status code is not 404, Received is " + statusCode);
+		responseCodeValidation(response, HttpStatus.SC_NOT_FOUND);
+
+	}
+
+	// Sending without Corr id header
+	@Test(dataProvider = "positiveInput")
+	public void ResponseCode_NoCorrIdHeader_500ErrorExpected(BodyLoanAppSecret b1) {
+
+		Response response = execute(given().baseUri(baseUri).basePath(basePath).headers("x-cf-source-id", SOURCE_ID),
+				b1);
+		responseCodeValidation(response, HttpStatus.SC_INTERNAL_SERVER_ERROR);
+
+	}
+
+	// Sending without source id header
+
+	@Test(dataProvider = "positiveInput")
+	public void ResponseCode_NoSourceIdHeader_500ErrorExpected(BodyLoanAppSecret b1) {
+
+		Response response = execute(
+				given().baseUri(baseUri).basePath(basePath).headers("x-cf-corr-id", randomUUId().toString()), b1);
+		responseCodeValidation(response, HttpStatus.SC_INTERNAL_SERVER_ERROR);
 
 	}
 
 	@Test(dataProvider = "positiveInput")
-	public void ResponseCode_ValidInput_200Ok(BodyLoanAppSecret b1) {
+	public void ResponseCode_ValidInput_Http200Ok(BodyLoanAppSecret b1) {
 
 		Response response = execute(rspec, b1);
-		int statusCode = response.getStatusCode();
-		assertTrue(statusCode == HttpStatus.SC_OK, "Status code is not 200 OK, Received is " + statusCode);
+		responseCodeValidation(response, HttpStatus.SC_OK);
 
 	}
 
-	@Test(dataProvider = "positiveInput")
+	// check if output is received in a reasonable time
+	@Test(dataProvider = "positiveInput", dependsOnMethods = "ResponseCode_ValidInput_Http200Ok")
 	public void ResponseCode_ReponseTime_LessThanNSeconds(BodyLoanAppSecret b1) {
 		Response response = execute(rspec, b1);
 		assertTrue(response.getTimeIn(TimeUnit.SECONDS) < Expected_ResponseTime,
@@ -100,10 +129,12 @@ public class ByLeadSecretTests {
 
 	}
 
-	@Test(dataProvider = "positiveInput")
+	// all valid values test
+	@Test(dataProvider = "positiveInput", dependsOnMethods = "ResponseCode_ValidInput_Http200Ok")
 	public void ResponseValue_ProductType_Personal_Loan(BodyLoanAppSecret b1) {
 
 		Response response = execute(rspec, b1);
+		// Log.info("Response :::::::::" + response.asString());
 		LoanAppSecretResponse apiresponse = response.getBody().as(LoanAppSecretResponse.class);
 		LoanAppResumptionInfo lifo = apiresponse.getLoanAppResumptionInfo();
 		BorrowerResumptionInfo brInfo = lifo.getBorrowerResumptionInfo();
@@ -122,7 +153,6 @@ public class ByLeadSecretTests {
 		lifo.getCashOutAmount();
 		boolean isCanAddLiteral = lifo.isCanAddCollateral();
 		Object rewardProgramCode = lifo.getRewardProgramCode();
-		System.out.println(" --> " + lifo.getAddon());
 		Object isMobileDiscountApplied = lifo.getIsMobileDiscountApplied();
 		lifo.isCheckingDiscountAvailable();
 
@@ -145,7 +175,13 @@ public class ByLeadSecretTests {
 	}
 
 	public Response execute(RequestSpecification rspec, BodyLoanAppSecret b1) {
+		// Logging if validation fails
 		return given().spec(rspec).when().log().ifValidationFails().body(b1).post();
+	}
+
+	public static void responseCodeValidation(Response response, int httpStatus) {
+		int statusCode = response.getStatusCode();
+		assertTrue(statusCode == httpStatus, "Status code is not " + httpStatus + "  Received is " + statusCode);
 	}
 
 }

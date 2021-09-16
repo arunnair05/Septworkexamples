@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Web Test Suite" verbose="1"
+	configfailurepolicy="continue" >
+
+
+	<listeners>
+		
+		<listener class-name="org.arun.basic.Septworkexamples.core.WebDriverListener" />
+
+	</listeners>
+
+	<test name="Tests in Chrome">
+		<parameter name="browserName" value="chrome" />
+		<classes>
+		<class name="org.arun.basic.Septworkexamples.web.Tests.NonDmFunnel"></class>
+		</classes>
+		
+	</test>
+
+
+</suite>
